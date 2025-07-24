@@ -18,13 +18,11 @@ A modern C++20 quantitative finance library focused on **bond pricing** and **Eu
 - **Zero-coupon bonds** for discount instruments
 - **Clean/dirty price calculations** with accrued interest
 - **Risk metrics**: Modified duration, convexity, DV01
-- **Multiple bond types**: Treasury, Corporate with different conventions
 
 ### 📈 **European Bond Options**
 - **Black-76 model** for analytical option pricing
 - **Monte Carlo simulation** with variance reduction techniques
 - **Complete Greeks**: Delta, Gamma, Theta, Vega, Rho
-- **Intrinsic vs. time value** decomposition
 
 ### 🔧 **Advanced Engines**
 - **Sensitivity analysis** with finite difference methods
@@ -57,43 +55,6 @@ make -j$(nproc)
 ctest
 ```
 
-### Basic Usage
-
-```cpp
-#include "instruments/Bond.hpp"
-#include "instruments/EuropeanBondOption.hpp"
-#include "core/DiscountCurve.hpp"
-#include "engines/Black76.hpp"
-
-using namespace quant;
-
-int main() {
-    // Create a 5% Treasury bond
-    auto bond = bonds::createTreasuryBond(0.05, Date(2024, 1, 1), Date(2026, 1, 1));
-    
-    // Set up 4% flat discount curve
-    DiscountCurve curve(0.04);
-    Date valuationDate(2024, 1, 1);
-    
-    // Price the bond
-    double cleanPrice = bond.cleanPrice(curve, valuationDate);
-    double duration = bond.modifiedDuration(curve, valuationDate);
-    
-    std::cout << "Bond Clean Price: " << cleanPrice << std::endl;
-    std::cout << "Modified Duration: " << duration << " years" << std::endl;
-    
-    // Create and price a European call option
-    EuropeanBondOption option(bond, 102.0, Date(2024, 7, 1), OptionType::CALL);
-    double optionPrice = option.priceBlack76(curve, 0.15, valuationDate);
-    
-    std::cout << "Option Price: " << optionPrice << std::endl;
-    
-    return 0;
-}
-```
-
-## 📚 API Documentation
-
 ### Core Components
 
 #### **Date & Day Count**
@@ -120,20 +81,6 @@ DiscountCurve interpolatedCurve(dates, rates);
 // Get discount factors and rates
 double df = flatCurve.discountFactor(valueDate, futureDate);
 double zeroRate = flatCurve.zeroRate(valueDate, futureDate);
-```
-
-### Bond Instruments
-
-#### **Factory Functions**
-```cpp
-// Treasury bond (semi-annual, ACT/365)
-auto treasury = bonds::createTreasuryBond(0.0375, issueDate, maturityDate);
-
-// Corporate bond (semi-annual, 30/360) 
-auto corporate = bonds::createCorporateBond(0.055, issueDate, maturityDate);
-
-// Zero-coupon bond
-auto zero = bonds::createZeroCouponBond(issueDate, maturityDate);
 ```
 
 #### **Pricing & Analytics**
@@ -274,72 +221,13 @@ make valgrind
 - Monte Carlo vs. analytical pricing comparison
 - Day count convention studies
 
-## 🔬 Implementation Details
-
 ### **Numerical Accuracy**
 - **IEEE 754 double precision** throughout
 - **Robust convergence criteria** for iterative solvers
 - **Comprehensive edge case handling**
 
-### **Performance**
-- **Header-only core** for compile-time optimization
-- **Efficient memory usage** with move semantics
-- **Parallel Monte Carlo** simulation support
 
-### **Extensibility**
-- **Clean interfaces** for adding new instruments
-- **Pluggable pricing engines**
-- **Modular design** for easy testing
-
-## 📈 Roadmap
-
-### **Phase 1: Core Stability** ✅
-- [x] Bond pricing and analytics
-- [x] European option pricing
-- [x] Comprehensive testing
-
-### **Phase 2: Extended Instruments**
-- [ ] Floating rate notes
-- [ ] Callable/putable bonds
-- [ ] Interest rate swaps
-
-### **Phase 3: Advanced Models**
-- [ ] Binomial/trinomial trees
-- [ ] Interest rate models (Vasicek, CIR)
-- [ ] American option pricing
-
-### **Phase 4: Performance**
-- [ ] GPU acceleration for Monte Carlo
-- [ ] Parallel curve bootstrapping
-- [ ] SIMD optimization
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### **Development Setup**
-```bash
-# Clone with submodules
-git clone --recursive https://github.com/yourusername/quant_pricer.git
-
-# Install development dependencies
-pip install pre-commit clang-format
-
-# Set up pre-commit hooks
-pre-commit install
-
-# Format code
-make format
-
-# Generate documentation
-make docs
-```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Black-Scholes model** foundations from Fischer Black and Myron Scholes
 - **Numerical methods** inspired by "Numerical Recipes"
